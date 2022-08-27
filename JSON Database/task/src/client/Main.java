@@ -1,38 +1,36 @@
 package client;
 
-import java.io.*;
-import java.net.Socket;
+import com.beust.jcommander.JCommander;
+import java.util.Arrays;
+import java.util.Scanner;
 
-public class Main {
-
-    Socket clientSocket;
-    DataInputStream input;
-    DataOutputStream output;
+public class Main extends Args {
 
     public static void main(String[] args) {
-        Main client = new Main();
+        Scanner scanner = new Scanner(System.in);
+        Args arguments = new Args();
+
+        while (!exit) {
+            String s = scanner.nextLine();
+
+            String[] argValues;
+
+            if (s.split(" ").length < 5) {
+                argValues = s.split(" ", s.split(" ").length);
+            } else {
+                argValues = s.split(" ", 6);
+            }
+
+            JCommander.newBuilder()
+                    .addObject(arguments)
+                    .build()
+                    .parse(argValues);
+
+            System.out.println(Arrays.toString(argValues));
+            arguments.run();
+        }
+        Client client = new Client();
         client.run();
     }
 
-    public void run() {
-        try {
-            clientSocket = new Socket("127.0.0.1", 23456);
-
-            output = new DataOutputStream(clientSocket.getOutputStream());
-            String sent = "Give me a record # 23";
-            output.writeUTF(sent);
-            System.out.println("Sent: " + sent);
-            input = new DataInputStream(clientSocket.getInputStream());
-
-            String serverMessage = input.readUTF();
-            System.out.println("Received: " + serverMessage);
-
-            clientSocket.close();
-            input.close();
-            output.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
