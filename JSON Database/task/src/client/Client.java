@@ -2,23 +2,27 @@ package client;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
 
-    Args args = new Args();
+    Scanner scanner = new Scanner(System.in);
 
     public void run() {
+        String userInput = scanner.nextLine();
         System.out.println("Client started!");
+
         String SERVER_ADDRESS = "127.0.0.1";
         int SERVER_PORT = 23456;
+
+
         try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
              DataInputStream input = new DataInputStream(socket.getInputStream());
              DataOutputStream output = new DataOutputStream(socket.getOutputStream()))
         {
 
-            String outputMsg = "Give me a record # 23";
-            output.writeUTF(outputMsg);
-            System.out.printf("Sent: %s", outputMsg);
+            output.writeUTF(userInput);
+            System.out.printf("Sent: %s", userInput);
 
             String receivedMsg = input.readUTF();
             System.out.printf("Received: %s", receivedMsg);
