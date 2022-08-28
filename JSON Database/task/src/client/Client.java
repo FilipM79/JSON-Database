@@ -23,7 +23,7 @@ public class Client {
 
             output.writeUTF(userInput);
             System.out.printf("Sent: %s", userInput);
-
+            System.out.println();
             String receivedMsg = input.readUTF();
             System.out.printf("Received: %s", receivedMsg);
 

@@ -11,11 +11,11 @@ public class Args {
 //    public static boolean exit = false;
 
     @Parameter(names = "-t")
-    String commandRequest = "";
+    static String commandRequest = "";
     @Parameter(names = "-i")
-    int cellIndex = 0;
+    static int cellIndex = 0;
     @Parameter(names = "-m")
-    String valueToStore = "";
+    static String valueToStore = "";
 
 
 
@@ -25,9 +25,8 @@ public class Args {
 
 //        while (!exit) {
         userInput = receivedMsg;
-        System.out.println("Args user input: " + userInput);
-
         String[] argValues;
+//        System.out.println("Args user input: " + userInput);
 
         if (userInput.split(" ").length < 5) {
             argValues = userInput.split(" ", userInput.split(" ").length);

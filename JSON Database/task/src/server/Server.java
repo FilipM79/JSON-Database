@@ -24,14 +24,13 @@ public class Server {
                 Args args = new Args();
                 args.run(receivedMsg);
 
-
                 Database database = new Database();
                 database.execute();
 
 //                String record = receivedMsg.split("# ")[1];
 //                System.out.printf("Received: %s", receivedMsg);
 
-                String outputMsg = String.format("? " + database.execute());
+                String outputMsg = String.format(database.execute());
                 output.writeUTF(outputMsg);
                 System.out.printf("Sent: %s", outputMsg);
             }

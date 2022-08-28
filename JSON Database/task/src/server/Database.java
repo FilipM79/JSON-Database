@@ -12,9 +12,6 @@ public class Database extends Args {
     public String execute() {
 
         String dbMessage = "";
-        System.out.println("Args commandRequest: " + commandRequest);
-        System.out.println("Args cellIndex: " + cellIndex);
-        System.out.println("Args valueToStore: " + valueToStore);
 
         List<String> mainList = new ArrayList<>(1000);
         for (int i = 0; i < 1000; i++) {
