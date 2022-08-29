@@ -20,7 +20,7 @@ public class Server {
                 receivedMsg = input.readUTF();
                 if (receivedMsg.equals("")) {
                     System.out.println("Received message is empty");
-                } else System.out.println("Received from client: " + receivedMsg);
+                } else System.out.println("Received: " + receivedMsg);
 
                 Args args = new Args();
                 args.run(receivedMsg);

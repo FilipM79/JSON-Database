@@ -2,6 +2,7 @@ package client;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Client {
@@ -22,11 +23,19 @@ public class Client {
         {
 
             output.writeUTF(userInput);
-            System.out.print("Sent: " + userInput);
+
+            ClientArgs clientArgs = new ClientArgs();
+            clientArgs.run(userInput);
+            String temp = "";
+            if(!ClientArgs.clientCommandRequest.equals("exit")) temp = String.valueOf(ClientArgs.clientCellIndex);
+
+            System.out.print("Sent: " + ClientArgs.clientCommandRequest + " " + temp + " "
+                    + ClientArgs.clientValueToStore);
+
             System.out.println();
 
             String receivedMsg = input.readUTF();
-            System.out.printf("Received from server: %s", receivedMsg);
+            System.out.printf("Received: %s", receivedMsg);
 
         } catch (IOException e) {
             e.printStackTrace();

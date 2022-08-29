@@ -21,29 +21,29 @@ public class Database {
 
 
         if (!commands.contains(commandRequest) || cellIndex > 1000) {
-            dbMessage = "ERROR1";
+            dbMessage = "ERROR";
         } else {
 
             switch (commandRequest) {
                 case "exit":
-                    dbMessage = "Bye";
+                    dbMessage = "OK";
                     exit = true;
                     break;
 
                 case "set":
                     mainList.set(cellIndex, valueToStore);
-                    dbMessage = "OK1";
+                    dbMessage = "OK";
                     break;
 
                 case "get":
                     if (Objects.equals(mainList.get(cellIndex), "")) {
-                        dbMessage = "ERROR2";
+                        dbMessage = "ERROR";
                     } else dbMessage = mainList.get(cellIndex);
                     break;
 
                 case "delete":
                     mainList.set(cellIndex, "");
-                    dbMessage = "OK2";
+                    dbMessage = "OK";
                     break;
             }
         }
