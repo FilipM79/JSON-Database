@@ -1,5 +1,4 @@
-package server;
-
+package client;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
@@ -7,26 +6,19 @@ import com.beust.jcommander.Parameter;
 import java.util.Arrays;
 
 public class Args {
-    static String userInput;
-//    public static boolean exit = false;
 
     @Parameter(names = "-t")
-    static String commandRequest = "";
+    public String commandRequest = "";
     @Parameter(names = "-i")
-    static int cellIndex = 0;
+    public int cellIndex = 0;
     @Parameter(names = "-m")
-    static String valueToStore = "";
+    public String valueToStore = "";
 
-
-
-    public void run(String receivedMsg) {
-
+    public void run(String userInput) {
         Args args = new Args();
 
-//        while (!exit) {
-        userInput = receivedMsg;
         String[] argValues;
-//        System.out.println("Args user input: " + userInput);
+        System.out.println("Args user input: " + userInput);
 
         if (userInput.split(" ").length < 5) {
             argValues = userInput.split(" ", userInput.split(" ").length);
@@ -34,12 +26,16 @@ public class Args {
             argValues = userInput.split(" ", 6);
         }
 
-        System.out.println(Arrays.toString(argValues));
+        System.out.println("Args 2 " + Arrays.toString(argValues));
 
         JCommander.newBuilder()
                 .addObject(args)
                 .build()
                 .parse(argValues);
 
+        System.out.println("Args cr: " + commandRequest);
+        System.out.println("Args ci: " + cellIndex);
+        System.out.println("Args vts: " + valueToStore);
+        System.out.println("argValues: " + Arrays.toString(argValues));
     }
 }
