@@ -6,35 +6,45 @@ import java.util.Objects;
 
 public class Database {
 
-    String commands = "get, set, delete";
+    String commands = "get, set, delete, exit";
+    static boolean exit = true;
+    static List<String> mainList = new ArrayList<>(1000);
 
-    public String execute(String receivedCommandRequest, int receivedCellIndex, String receivedValueToStore) {
-        String dbMessage = "";
-
-        List<String> mainList = new ArrayList<>(1000);
+    void makeList() {
         for (int i = 0; i < 1000; i++) {
             mainList.add(i, "");
         }
+    }
 
-        if (!commands.contains(receivedCommandRequest) || receivedCellIndex > 1000) {
-            dbMessage = "ERROR";
+    public String execute(String commandRequest, int cellIndex, String valueToStore) {
+        String dbMessage = "";
+
+
+        if (!commands.contains(commandRequest) || cellIndex > 1000) {
+            dbMessage = "ERROR1";
         } else {
 
-            if (Objects.equals(receivedCommandRequest, "exit")) {
-                dbMessage = "Bye";
+            switch (commandRequest) {
+                case "exit":
+                    dbMessage = "Bye";
+                    exit = true;
+                    break;
 
-            } else if (Objects.equals(receivedCommandRequest, "set")) {
-                mainList.add(receivedCellIndex, receivedValueToStore);
-                dbMessage = "OK";
+                case "set":
+                    mainList.set(cellIndex, valueToStore);
+                    dbMessage = "OK1";
+                    break;
 
-            } else if (!receivedCommandRequest.contains("get")) {
-                if (Objects.equals(mainList.get(receivedCellIndex), "")) {
-                    dbMessage = "ERROR";
-                } else dbMessage = mainList.get(receivedCellIndex);
+                case "get":
+                    if (Objects.equals(mainList.get(cellIndex), "")) {
+                        dbMessage = "ERROR2";
+                    } else dbMessage = mainList.get(cellIndex);
+                    break;
 
-            } else if (!receivedCommandRequest.contains("delete")) {
-                mainList.set(receivedCellIndex, "");
-                dbMessage = "OK";
+                case "delete":
+                    mainList.set(cellIndex, "");
+                    dbMessage = "OK2";
+                    break;
             }
         }
 

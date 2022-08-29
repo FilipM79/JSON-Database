@@ -9,6 +9,7 @@ public class Client {
 
     public void run() {
 
+        System.out.print("> ");
         String userInput = scanner.nextLine();
         System.out.println("Client started!");
 
@@ -19,15 +20,13 @@ public class Client {
              DataInputStream input = new DataInputStream(socket.getInputStream());
              DataOutputStream output = new DataOutputStream(socket.getOutputStream()))
         {
-            Args args = new Args();
-            args.run(userInput);
-            output.writeUTF(args.commandRequest.trim() + " " + String.valueOf(args.cellIndex).trim()  + " "
-                    + args.valueToStore);
-            System.out.print("Sent: " + args.commandRequest + " " + args.cellIndex  + " " + args.valueToStore);
-            System.out.println(userInput);
+
+            output.writeUTF(userInput);
+            System.out.print("Sent: " + userInput);
             System.out.println();
+
             String receivedMsg = input.readUTF();
-            System.out.printf("Received: %s", receivedMsg);
+            System.out.printf("Received from server: %s", receivedMsg);
 
         } catch (IOException e) {
             e.printStackTrace();
