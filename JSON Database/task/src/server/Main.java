@@ -4,14 +4,14 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Server server = new Server();
         Database database = new Database();
+        Server server = new Server(database);
         database.makeList();
-        Database.exit = false;
+        database.exit = false;
 
         System.out.println("Server started!");
 
-        while (!Database.exit) {
+        while (!database.exit) {
             server.run();
         }
     }

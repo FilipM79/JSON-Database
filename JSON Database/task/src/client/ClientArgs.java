@@ -5,27 +5,26 @@ import com.beust.jcommander.Parameter;
 
 public class ClientArgs {
 
-    @Parameter(names = "-t")
-    public static String clientCommandRequest = "";
-    @Parameter(names = "-i")
-    public static int clientCellIndex = 0;
-    @Parameter(names = "-m")
-    public static String clientValueToStore = "";
+    private ClientArgs() {
 
-    public void run(String inputString) {
+    }
+    @Parameter(names = "-t")
+    String clientCommandRequest = "";
+    @Parameter(names = "-i")
+    int clientCellIndex = 0;
+    @Parameter(names = "-m")
+    String clientValueToStore = "";
+
+    public static ClientArgs parse(String inputString) {
 
         ClientArgs clientArgs = new ClientArgs();
-        String[] argValues;
-
-        if (inputString.split(" ").length < 5) {
-            argValues = inputString.split(" ", inputString.split(" ").length);
-        } else {
-            argValues = inputString.split(" ", 6);
-        }
+        String[] argValues = inputString.split(" ", Math.min(6, inputString.split(" ").length));
 
         JCommander.newBuilder()
                 .addObject(clientArgs)
                 .build()
                 .parse(argValues);
+
+        return clientArgs;
     }
 }

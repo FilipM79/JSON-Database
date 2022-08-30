@@ -1,39 +1,47 @@
 package server;
 
-import java.io.*;
-import java.net.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server {
-    static String receivedMsg;
+
+    private final Database database;
+
+    public Server(Database database) {
+        this.database = database;
+    }
+
     public void run() {
 
-        int port = 23456;
-        String address = "127.0.0.1";
+        String receivedMsg;
+        final int port = 23456;
+        final String address = "127.0.0.1";
 
-        try (ServerSocket server = new ServerSocket(port, 50, InetAddress.getByName(address))) {
+        try (
+                ServerSocket server = new ServerSocket(port, 50, InetAddress.getByName(address));
+                Socket socket = server.accept();
+                DataInputStream input = new DataInputStream(socket.getInputStream());
+                DataOutputStream output = new DataOutputStream(socket.getOutputStream())
+        ) {
 
-            try (Socket socket = server.accept();
-                 DataInputStream input = new DataInputStream(socket.getInputStream());
-                 DataOutputStream output = new DataOutputStream(socket.getOutputStream()))
-            {
+            receivedMsg = input.readUTF();
+            if (receivedMsg.equals("")) {
+                System.out.println("Received message is empty");
+            } else System.out.println("Received: " + receivedMsg);
 
-                receivedMsg = input.readUTF();
-                if (receivedMsg.equals("")) {
-                    System.out.println("Received message is empty");
-                } else System.out.println("Received: " + receivedMsg);
+            ServerArgs serverArgs = ServerArgs.parse(receivedMsg);
 
-                Args args = new Args();
-                args.run(receivedMsg);
+            database.execute(serverArgs.commandRequest, serverArgs.cellIndex, serverArgs.valueToStore);
 
-                Database database = new Database();
-                database.execute(Args.commandRequest, Args.cellIndex, Args.valueToStore);
+            String outputMsg = String.format(database.execute(serverArgs.commandRequest, serverArgs.cellIndex,
+                    serverArgs.valueToStore));
 
-                String outputMsg = String.format(database.execute(Args.commandRequest, Args.cellIndex,
-                        Args.valueToStore));
-
-                output.writeUTF(outputMsg);
-                System.out.printf("Sent: " +  outputMsg + "\n" + "\n");
-            }
+            output.writeUTF(outputMsg);
+            System.out.printf("Sent: " +  outputMsg + "\n" + "\n");
 
         } catch (IOException e) {
             e.printStackTrace();
