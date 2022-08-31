@@ -1,33 +1,32 @@
 package client;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class Client {
 
-public void run(String[] args) {
+    private static final String SERVER_ADDRESS = "127.0.0.1";
+    private static final int SERVER_PORT = 23456;
 
-//        String inputString = "-t set -i 1 -m \"Hello world!\"";
-//        args = inputString.split(",", Math.min(6, inputString.split(" ").length));
+    public void run(String[] args) {
+
         System.out.print("> ");
         String userInput = String.join(" ", args);
-        System.out.println(userInput);
         System.out.println("Client started!");
 
-        String serverAdress = "127.0.0.1";
-        int serverPort = 23456;
-
-        try (Socket socket = new Socket(serverAdress, serverPort);
+        try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
              DataInputStream input = new DataInputStream(socket.getInputStream());
              DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
 
             output.writeUTF(userInput);
-
             ClientArgs clientArgs = ClientArgs.parse(userInput);
 
             String temp = "";
-            if (!clientArgs.clientCommandRequest.equals("exit")) temp = String.valueOf(clientArgs.clientCellIndex);
+            if (!clientArgs.clientCommandRequest.equals("exit")) {
+                temp = String.valueOf(clientArgs.clientCellIndex);
+            }
 
             System.out.print("Sent: " + clientArgs.clientCommandRequest + " " + temp + " "
                     + clientArgs.clientValueToStore);

@@ -1,53 +1,27 @@
 package server;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 public class Database {
-
-    String commands = "get, set, delete, exit";
-    boolean exit = true;
-    List<String> mainList = new ArrayList<>(1000);
-
-    void makeList() {
-        for (int i = 0; i < 1000; i++) {
-            mainList.add(i, "");
-        }
+    public Database(int capacity) {
+        this.capacity = capacity;
+        mainList = new String[capacity];
     }
 
-    public String execute(String commandRequest, int cellIndex, String valueToStore) {
+    private final String[] mainList;
+    private final int capacity;
 
-        String dbMessage = "";
+    public String get(int index) {
+        return mainList[index];
+    }
 
-        if (!commands.contains(commandRequest) || cellIndex > 1000) {
-            dbMessage = "ERROR";
-        } else {
+    public boolean set(int index, String value) {
+        if (index >= capacity) return false;
+        mainList[index] = value;
+        return true;
+    }
 
-            switch (commandRequest) {
-                case "exit":
-                    dbMessage = "OK";
-                    exit = true;
-                    break;
-
-                case "set":
-                    mainList.set(cellIndex, valueToStore);
-                    dbMessage = "OK";
-                    break;
-
-                case "get":
-                    if (Objects.equals(mainList.get(cellIndex), "")) {
-                        dbMessage = "ERROR";
-                    } else dbMessage = mainList.get(cellIndex);
-                    break;
-
-                case "delete":
-                    mainList.set(cellIndex, "");
-                    dbMessage = "OK";
-                    break;
-            }
-        }
-
-        return dbMessage;
+    public boolean delete(int index) {
+        if (index >= capacity) return false;
+        mainList[index] = null;
+        return true;
     }
 }
