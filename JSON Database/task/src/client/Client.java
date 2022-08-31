@@ -2,44 +2,43 @@ package client;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.Arrays;
 
 public class Client {
 
+public void run(String[] args) {
 
-    public void run() {
+//        String inputString = "-t set -i 1 -m \"Hello world!\"";
+//        args = inputString.split(",", Math.min(6, inputString.split(" ").length));
+        System.out.print("> ");
+        String userInput = String.join(" ", args);
+        System.out.println(userInput);
+        System.out.println("Client started!");
 
-        try (Scanner scanner = new Scanner(System.in)) {
+        String serverAdress = "127.0.0.1";
+        int serverPort = 23456;
 
-            System.out.print("> ");
-            String userInput = scanner.nextLine();
-            System.out.println("Client started!");
+        try (Socket socket = new Socket(serverAdress, serverPort);
+             DataInputStream input = new DataInputStream(socket.getInputStream());
+             DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
 
-            String serverAdress = "127.0.0.1";
-            int serverPort = 23456;
+            output.writeUTF(userInput);
 
-            try (Socket socket = new Socket(serverAdress, serverPort);
-                 DataInputStream input = new DataInputStream(socket.getInputStream());
-                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
+            ClientArgs clientArgs = ClientArgs.parse(userInput);
 
-                output.writeUTF(userInput);
+            String temp = "";
+            if (!clientArgs.clientCommandRequest.equals("exit")) temp = String.valueOf(clientArgs.clientCellIndex);
 
-                ClientArgs clientArgs = ClientArgs.parse(userInput);
+            System.out.print("Sent: " + clientArgs.clientCommandRequest + " " + temp + " "
+                    + clientArgs.clientValueToStore);
 
-                String temp = "";
-                if (!clientArgs.clientCommandRequest.equals("exit")) temp = String.valueOf(clientArgs.clientCellIndex);
+            System.out.println();
 
-                System.out.print("Sent: " + clientArgs.clientCommandRequest + " " + temp + " "
-                        + clientArgs.clientValueToStore);
+            String receivedMsg = input.readUTF();
+            System.out.printf("Received: %s", receivedMsg);
 
-                System.out.println();
-
-                String receivedMsg = input.readUTF();
-                System.out.printf("Received: %s", receivedMsg);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
