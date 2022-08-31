@@ -1,5 +1,7 @@
 package server;
 
+import com.beust.jcommander.JCommander;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,31 +11,40 @@ import java.net.Socket;
 
 public class Server {
 
+    String receivedMsg;
+    private static final int PORT = 23654;
+    private static final String ADDRESS = "127.0.0.1";
     private final Database database;
 
     public Server(Database database) {
         this.database = database;
     }
 
-    public void run() {
+    public String[] run() {
 
-        String receivedMsg;
-        final int port = 23456;
-        final String address = "127.0.0.1";
+        String[] argValues = new String[6];
 
         try (
-                ServerSocket server = new ServerSocket(port, 50, InetAddress.getByName(address));
-                Socket socket = server.accept();
+                ServerSocket serverSocket = new ServerSocket(PORT, 50,
+                        InetAddress.getByName(ADDRESS));
+                Socket socket = serverSocket.accept();
                 DataInputStream input = new DataInputStream(socket.getInputStream());
                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())
         ) {
 
             receivedMsg = input.readUTF();
+
             if (receivedMsg.equals("")) {
                 System.out.println("Received message is empty");
             } else System.out.println("Received: " + receivedMsg);
 
-            ServerArgs serverArgs = ServerArgs.parse(receivedMsg);
+            ServerArgs serverArgs = new ServerArgs();
+            argValues = receivedMsg.split(" ", Math.min(6, receivedMsg.split(" ").length));
+
+            JCommander.newBuilder()
+                    .addObject(serverArgs)
+                    .build()
+                    .parse(argValues);
 
             database.execute(serverArgs.commandRequest, serverArgs.cellIndex, serverArgs.valueToStore);
 
@@ -43,8 +54,10 @@ public class Server {
             output.writeUTF(outputMsg);
             System.out.printf("Sent: " +  outputMsg + "\n" + "\n");
 
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return argValues;
     }
 }

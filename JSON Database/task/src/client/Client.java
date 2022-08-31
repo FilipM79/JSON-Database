@@ -1,45 +1,58 @@
 package client;
 
+import com.beust.jcommander.JCommander;
+
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class Client {
 
+        private static final String SERVER_ADDRESS = "127.0.0.1";
+        private static final int SERVER_PORT = 23654;
 
-    public void run() {
+    public static boolean hostAvailabilityCheck() {
+        try (Socket s = new Socket(SERVER_ADDRESS, SERVER_PORT)) {
+            return true;
+        } catch (IOException ex) {
+            /* ignore */
+        }
+        return false;
+    }
 
-        try (Scanner scanner = new Scanner(System.in)) {
+    public void run(String inputString, String[] args) {
 
-            System.out.print("> ");
-            String userInput = scanner.nextLine();
+        ClientArgs clientArgs = new ClientArgs();
+
+        JCommander.newBuilder()
+                .addObject(clientArgs)
+                .build()
+                .parse(args);
+
+        try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT)) {
+
             System.out.println("Client started!");
 
-            String serverAdress = "127.0.0.1";
-            int serverPort = 23456;
+            try (DataInputStream input = new DataInputStream(socket.getInputStream());
+                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())
+            ) {
 
-            try (Socket socket = new Socket(serverAdress, serverPort);
-                 DataInputStream input = new DataInputStream(socket.getInputStream());
-                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
-
-                output.writeUTF(userInput);
-
-                ClientArgs clientArgs = ClientArgs.parse(userInput);
+                output.writeUTF(inputString);
 
                 String temp = "";
-                if (!clientArgs.clientCommandRequest.equals("exit")) temp = String.valueOf(clientArgs.clientCellIndex);
+                if (!clientArgs.clientCommandRequest.equals("exit")) {
+                    temp = String.valueOf(clientArgs.clientCellIndex);
+                }
 
-                System.out.print("Sent: " + clientArgs.clientCommandRequest + " " + temp + " "
+                System.out.println("Sent: " + clientArgs.clientCommandRequest + " " + temp + " "
                         + clientArgs.clientValueToStore);
-
-                System.out.println();
 
                 String receivedMsg = input.readUTF();
                 System.out.printf("Received: %s", receivedMsg);
-
-            } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println();
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
